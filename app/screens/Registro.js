@@ -10,12 +10,36 @@ export default class RegistroAndar extends Component {
       lastName:'',
       email:'',
       phone:'',
+      password:'',
       documentError:'',
       firstNameError:'',
       lastNameError:'',
       emailError:'',
       phoneError:'',
+      passwordError:'',
     }
+  }
+
+  nuevoUsuario = (e) => {
+    e.preventDefault();
+    var tipoDoc = this.state.lastName;
+    var numDoc = this.state.lastName;
+    var nombre = this.state.lastName;
+    var apellido = this.state.lastName;
+    var correo = this.state.lastName;
+    var celular = this.state.lastName;
+    var password = this.state.lastName;
+
+
+
+    var apellido = this.state.lastName;
+    var apellido = this.state.lastName;
+    var apellido = this.state.lastName;
+    var apellido = this.state.lastName;
+    var apellido = this.state.lastName;
+    var apellido = this.state.lastName;
+
+
   }
 
   submit() {
@@ -24,6 +48,7 @@ export default class RegistroAndar extends Component {
     this.lastNameValidator();
     this.emailValidator();
     this.phoneValidator();
+    this.passwordValidator();
   }
 
   documentValidator() {
@@ -79,6 +104,13 @@ export default class RegistroAndar extends Component {
       this.setState({phoneError:""})
     }
   }
+  passwordValidator() {
+    if (this.state.password == "") {
+      this.setState({passwordError:"Debes ingresar una contraseña"})
+    } else {
+      this.setState({passwordError:""})
+    }
+  }
 
   render() {
     return (
@@ -106,6 +138,11 @@ export default class RegistroAndar extends Component {
           keyboardType="numeric"
           maxLength={10}
           onChangeText={(text) => { this.setState({phone: text})}}
+        />
+        <Text style={{color:'red'}}>{this.state.passwordError}</Text>
+        <TextInput style={styles.inputText} placeholder="Contraseña"
+          maxLength={5}
+          onChangeText={(text) => { this.setState({password: text})}}
         />
         <TouchableOpacity style={styles.botom} onPress={() => {this.submit()}} >
             <Text style={styles.textBotom }>Registrarme</Text>
