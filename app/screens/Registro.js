@@ -1,4 +1,8 @@
 import React, { Component } from 'react';
+
+import axios from 'axios';
+import Global from '../../Global';
+
 import {StyleSheet, Text, View, TextInput, Button, Image, Alert, TouchableOpacity} from 'react-native';
 
 export default class RegistroAndar extends Component {
@@ -17,98 +21,144 @@ export default class RegistroAndar extends Component {
       emailError:'',
       phoneError:'',
       passwordError:'',
+      status: false
     }
   }
 
   nuevoUsuario = (e) => {
-    e.preventDefault();
-    var tipoDoc = this.state.lastName;
-    var numDoc = this.state.lastName;
-    var nombre = this.state.lastName;
+    console.log('Ingresa a nuevoUsuario');
+    var tipoDoc = '1';
+    var numDoc = this.state.document;
+    var nombre = this.state.firstName;
     var apellido = this.state.lastName;
-    var correo = this.state.lastName;
-    var celular = this.state.lastName;
-    var password = this.state.lastName;
+    var correo = this.state.email;
+    var celular = this.state.phone;
+    var password = this.state.password;
 
+    var fechaCreacion = new Date();
+    var fechaNacimiento = '1989-06-01T22:31:19.846Z';
+    var id = 0;
+    var tipo = '';
+    var url_Foto_Perfil_S3 = '';
 
-
-    var apellido = this.state.lastName;
-    var apellido = this.state.lastName;
-    var apellido = this.state.lastName;
-    var apellido = this.state.lastName;
-    var apellido = this.state.lastName;
-    var apellido = this.state.lastName;
-
-
+    var usuario = {
+      apellido : apellido,
+      celular : celular,
+      correo : correo,
+      fecha_Creacion : fechaCreacion,
+      fecha_Modificacion : fechaCreacion,
+      fecha_Nacimiento : fechaNacimiento,
+      id : id,
+      nombre : nombre,
+      numero_Documento : numDoc,
+      password : password,
+      tipo : tipo,
+      tipo_Documento : tipoDoc,
+      url_Foto_Perfil_S3 : url_Foto_Perfil_S3
+    };
+    var url = Global.urlAnDar + '/usuario';
+    axios.post(url, usuario).then(res => {
+      this.setState({status : true})
+    });
   }
 
   submit() {
-    this.documentValidator();
-    this.firstNameValidator();
-    this.lastNameValidator();
-    this.emailValidator();
-    this.phoneValidator();
-    this.passwordValidator();
+    var validDocument = this.documentValidator();
+    var validFirstName = this.firstNameValidator();
+    var validLastName = this.lastNameValidator();
+    var validEmail = this.emailValidator();
+    var validPhone = this.phoneValidator();
+    var validPassword = this.passwordValidator();
+    if (validDocument && validFirstName && validLastName && validEmail && validPhone && validPassword) {
+      this.nuevoUsuario();
+    }
   }
 
   documentValidator() {
     if (this.state.document == "") {
       this.setState({documentError:"Debes ingresar un número de documento"})
+      return false;
     } else {
       this.setState({documentError:""})
+      return true;
     }
   }
   firstNameValidator() {
     if (this.state.firstName == "") {
       this.setState({firstNameError:"Debes ingresar tu nombre"})
+      return false;
     } else {
       let regex = /^[a-zA-Z]+$/;
       let isValid = regex.test(this.state.firstName)
       if (!isValid) {
         this.setState({firstNameError:"El nombre debe ser alfabético"})
+        return false;
       } else {
         this.setState({firstNameError:""})
+        return true;
       }
     }
   }
   lastNameValidator() {
     if (this.state.lastName == "") {
       this.setState({lastNameError:"Debes ingresar tu apellido"})
+      return false;
     } else {
       let regex = /^[a-zA-Z]+$/;
       let isValid = regex.test(this.state.lastName)
       if (!isValid) {
         this.setState({lastNameError:"El nombre debe ser alfabético"})
+        return false;
       } else {
         this.setState({lastNameError:""})
+        return true;
       }
     }
   }
   emailValidator() {
     if (this.state.email == "") {
       this.setState({emailError:"Debes ingresar un email"})
+      return false;
     } else {
       let regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       let isValid = regex.test(this.state.email)
       if (!isValid) {
         this.setState({emailError:"Ingresa un email valido"})
+        return false;
       } else {
         this.setState({emailError:""})
+        return true;
       }
     }
   }
   phoneValidator() {
     if (this.state.phone == "") {
       this.setState({phoneError:"Debes ingresar un número de teléfono"})
+      return false;
     } else {
       this.setState({phoneError:""})
+      return true;
     }
   }
   passwordValidator() {
     if (this.state.password == "") {
       this.setState({passwordError:"Debes ingresar una contraseña"})
+      return false;
+    } else if (this.state.password.length < 5) {
+      this.setState({passwordError:"La contraseña es demasiado corta"})
+      return false;
     } else {
-      this.setState({passwordError:""})
+      let regexLetras = /[a-zA-Z]+/;
+      let regexNumeros = /[0-9]+/;
+      let isValidLetras = regexLetras.test(this.state.password)
+      let isValidNumeros = regexNumeros.test(this.state.password)
+      if (!isValidLetras || !isValidNumeros) {
+        this.setState({passwordError:"La contraseña debe tener letras y números"})
+        return false;
+      } else {
+        this.setState({passwordError:""})
+        return true;
+      }
     }
   }
 
@@ -141,7 +191,6 @@ export default class RegistroAndar extends Component {
         />
         <Text style={{color:'red'}}>{this.state.passwordError}</Text>
         <TextInput style={styles.inputText} placeholder="Contraseña"
-          maxLength={5}
           onChangeText={(text) => { this.setState({password: text})}}
         />
         <TouchableOpacity style={styles.botom} onPress={() => {this.submit()}} >
